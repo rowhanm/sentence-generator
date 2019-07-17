@@ -2,53 +2,40 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
+/*
+    Author - %%aut%%
+    Location - %%loc%%
+    Person - %%per%%
+*/
+
+//Populate this table from reading the csv in the app
+let sentences = {
+    "Arts and photography": [""],
+    "Biographies and memoirs": ["%%per%% was one of the greats. Read more about him now! 🔥"],
+    "Business and investing": ["To create wealth, Warren Buffett thinks you have to read books by %%aut%% 🔥"],
+    "Children's books": ["Find out what %%per%% and friends are up to today. Read now! 🔥🔥"],
+    "Cookbooks, food and wine": ["Every great meal comes from a great recipe. %%aut%% has quite a few of them. Read now! 🔥🔥"],
+    "History": ["\"%%aut%% is the best historian ever\" - Gandhi"],
+    "Literature and Fiction": ["%%per%% wants you to read now! 🔥🔥"],
+    "Mystery and suspense": ["\"I\'m so scared! Please read to save me!\" - %%per%%"],
+    "Romance": ["Man, isnt love a strange thing. %%per%% definitely thinks so!"],
+    "Sci-Fi and Fantasy": ["%%loc%% is one of the most interesting places in pop culture. Read more to see whats happening there! 🔥🔥"],
+    "Teens and young adults": ["Check out what %%per%% is upto in %%loc%% 🔥🔥"],
+    "Default": ["yes, this is a default notification. who said default cant be funny"]
+}
+
 function getSentence(category, author, person, location) {
-    console.log("inside get sentence");
-    console.log(category, author, person, location);
-    if(category === "Arts and photography") {
-        sentences = [`Great artists like ${author} think reading is the first step to creating great art. Read!`]
-        return sentences[Math.floor(Math.random()*sentences.length)]; 
+    let sentenceToEdit = sentences[category][Math.floor(Math.random()*(sentences[category]).length)];
+    if (sentenceToEdit.indexOf("%%aut%%") >= 0) {
+        sentenceToEdit = sentenceToEdit.replace(/%%aut%%/gi, author);
     }
-    if(category === "Biographies and memoirs") {
-        sentences = [`${person} was one of the greats. Read more about him now!`]
-        return sentences[Math.floor(Math.random()*sentences.length)]; 
+    if (sentenceToEdit.indexOf("%%per%%") >= 0) {
+        sentenceToEdit = sentenceToEdit.replace(/%%per%%/gi, person);
     }
-    if(category === "Business and investing") {
-        sentences = [`To create wealth, Warren Buffett thinks you have to read books by ${author}`]
-        return sentences[Math.floor(Math.random()*sentences.length)]; 
+    if (sentenceToEdit.indexOf("%%loc%%") >= 0) {
+        sentenceToEdit = sentenceToEdit.replace(/%%loc%%/gi, location);
     }
-    if(category === "Children's books") {
-        sentences = [`Find out what ${person} and friends are up to today. Read now!`]
-        return sentences[Math.floor(Math.random()*sentences.length)]; 
-    }
-    if(category === "Cookbooks, food and wine") {
-        sentences = [`Every great meal comes from a great recipe. ${author} has quite a few of them. Read now!`]
-        return sentences[Math.floor(Math.random()*sentences.length)]; 
-    }
-    if(category === "History") {
-        sentences = [`"${author} is the best historian ever" - Gandhi`]
-        return sentences[Math.floor(Math.random()*sentences.length)]; 
-    }
-    if(category === "Literature and Fiction") {
-        sentences = [`${person} wants you to read now!`]
-        return sentences[Math.floor(Math.random()*sentences.length)]; 
-    }
-    if(category === "Mystery and suspense") {
-        sentences = [`"I'm so scared! Please read to save me!" - ${person}`]
-        return sentences[Math.floor(Math.random()*sentences.length)]; 
-    }
-    if(category === "Romance") {
-        sentences = [`Man, isnt love a strange thing. ${person} definitely thinks so!`]
-        return sentences[Math.floor(Math.random()*sentences.length)]; 
-    }
-    if(category === "Sci-Fi and Fantasy") {
-        sentences = [`${location} is one of the most interesting places in pop culture. Read more to see whats happening there!`]
-        return sentences[Math.floor(Math.random()*sentences.length)]; 
-    }
-    if(category === "Teens and young adults") {
-        sentences = [`Check out what ${person} is upto in ${location}`]
-        return sentences[Math.floor(Math.random()*sentences.length)]; 
-    }
+    return sentenceToEdit;
 }
 
 var myFunction = function () {
@@ -62,13 +49,10 @@ var myFunction = function () {
     author=author.replace(/ /g,"+");
 
     var client = new HttpClient();
-    console.log('https://www.googleapis.com/books/v1/volumes?q=' + bookName + "+" + author + '&orderBy=relevance&langRestrict=en')
     client.get('https://www.googleapis.com/books/v1/volumes?q=' + bookName + "+" + author + '&orderBy=relevance&langRestrict=en', function(response) {
         let books = JSON.parse(response).items;
-        console.log(books);
         books = books.slice(0,1);
         books.forEach(element => {
-            console.log(element.volumeInfo);
             var newDiv = document.createElement("div");
             newDiv.style.display = 'flex';
             newDiv.style.flexDirection = 'row';
@@ -101,12 +85,24 @@ var myFunction = function () {
                     var gbooks = document.createElement("div");
                     var persons = document.createElement("div");
                     var locs = document.createElement("div");
-                    title.innerHTML += "Title: " + data.title;
-                    gbooks.innerHTML += "GBooks category: " + element.volumeInfo.categories[0];
-                    category.innerHTML += "Category: " + data.category;
-                    author.innerHTML += "Author: " + data.author;
-                    persons.innerHTML += "Persons: " + data.persons;
-                    locs.innerHTML += "Locations: " + data.locationsAndGPE;
+                    if ("title" in data) {
+                        title.innerHTML += "Title: " + data.title;
+                    }
+                    if ("categories" in element.volumeInfo) {
+                        gbooks.innerHTML += "GBooks category: " + element.volumeInfo.categories[0];
+                    }
+                    if ("category" in data) {
+                        category.innerHTML += "Category: " + data.category;
+                    }
+                    if ("author" in data) {
+                        author.innerHTML += "Author: " + data.author;
+                    }
+                    if ("persons" in data) {
+                        persons.innerHTML += "Persons: " + data.persons;
+                    }
+                    if ("locationsAndGPE" in data) {
+                        locs.innerHTML += "Locations: " + data.locationsAndGPE;
+                    }
                     content.appendChild(title);
                     content.appendChild(category);
                     content.appendChild(gbooks);
@@ -122,16 +118,34 @@ var myFunction = function () {
                     if (data.locationsAndGPE.length === 0) {
                         data.locationsAndGPE.push("in the book");
                     }
+                    if (!data.category) {
+                        sen1.innerHTML += getSentence("Default", data.author, data.persons[Math.floor(Math.random()*data.persons.length)], data.locationsAndGPE[0]);
+                    }
                     sen1.innerHTML += getSentence(data.category, data.author, data.persons[Math.floor(Math.random()*data.persons.length)], data.locationsAndGPE[0]);
                     notifications.appendChild(sen1);
                     notifications.style.borderStyle = "ridge";
                     newDiv.appendChild(notifications);
                 },
-                dataType: "json"
+                dataType: "json",
+                error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                    var content = document.createElement("div");
+                    content.style.margin = "1%";
+                    content.style.alignItems = 'center';
+                    var title = document.createElement("div");
+                    title.innerHTML += "Could not fetch google books metadata";
+                    content.appendChild(title);
+                    content.style.borderStyle = "groove";
+                    newDiv.appendChild(content);
+                    var notifications = document.createElement("div");
+                    notifications.style.margin = "1%";
+                    notifications.style.alignItems = 'center';
+                    var sen1 = document.createElement("div");
+                    sen1.innerHTML += getSentence("Default", "", "", "");
+                    notifications.appendChild(sen1);
+                    notifications.style.borderStyle = "ridge";
+                    newDiv.appendChild(notifications);
+                }  
             });
-
-
-
             document.getElementById("results").appendChild(newDiv);
 
         });
