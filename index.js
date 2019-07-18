@@ -68,7 +68,7 @@ var myFunction = function () {
 
 
             var xhr = new XMLHttpRequest();
-            var url = "http://localhost:4000";
+            var url = "http://35.226.214.140:4000";
             var data = JSON.stringify({"bookName": bookName, "author": author});
             $.ajax({
                 type: "POST",
