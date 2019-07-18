@@ -118,6 +118,9 @@ var myFunction = function () {
                     if (data.locationsAndGPE.length === 0) {
                         data.locationsAndGPE.push("in the book");
                     }
+                    if (data.persons.length === 0) {
+                        data.persons.push(data.author);
+                    }
                     if (!data.category) {
                         sen1.innerHTML += getSentence("Default", data.author, data.persons[Math.floor(Math.random()*data.persons.length)], data.locationsAndGPE[0]);
                     }
