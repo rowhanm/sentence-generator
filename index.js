@@ -17,12 +17,12 @@ let sentences = {
     "Children's books": ["Find out what %%per%% and friends are up to today. Read now! 🔥🔥"],
     "Cookbooks, food and wine": ["Every great meal comes from a great recipe. %%aut%% has quite a few of them. Read now! 🔥🔥", "Food is not just eating energy. It's an experience for %%aut%%. Read now.", "The cuisine in %%loc%% is considered as one of the best. Read now.", "%%aut%% wants to teach you interesting things about food. Read now."],
     "History": ["\"%%aut%% is the best historian ever\" - Gandhi", "If you think you have it tough, read history books by %%aut%%.", "The story of %%per%% is too interesting to miss it. Read now.", "History has been shaped by %%per%%. Want to know why? Read now."],
-    "Literature and Fiction": ["%%per%% wants you to read now! 🔥🔥"],
+    "Literature and Fiction": ["%%per%% wants you to read now! 🔥🔥", "History has been shaped by %%per%%. Want to know why? Read now.", "%%per%% will marry your daughter if you don't read now!"],
     "Mystery and suspense": ["\"I\'m so scared! Please read to save me!\" - %%per%%"],
     "Romance": ["Man, isnt love a strange thing. %%per%% definitely thinks so!"],
     "Sci-Fi and Fantasy": ["%%loc%% is one of the most interesting places in pop culture. Read more to see whats happening there! 🔥🔥"],
     "Teens and young adults": ["Check out what %%per%% is upto in %%loc%% 🔥🔥"],
-    "Default": ["yes, this is a default notification. who said default cant be funny"]
+    "Default": ["Yes, this is a default notification. who said default cant be funny!"]
 }
 
 function getSentence(category, author, person, location) {
@@ -80,14 +80,17 @@ var myFunction = function () {
             url: url,
             data: data,
             success: function (data, status, xhr) {
+                console.log({data});
                 var quote = document.createElement("blockquote");
                 quote.classList.add("blockquote");
                 quote.classList.add("text-center");
                 if (data.locationsAndGPE.length === 0) {
-                    data.category = "Default"
+                    // data.category = "Default"
+                    data.category = "Literature and Fiction"
                 }
                 if (data.persons.length === 0) {
-                    data.category = "Default"
+                    data.category = "Literature and Fiction"
+                    data.persons[0] = data.author;
                 }
                 if (!data.category) {
                     data.category = "Default";
@@ -95,6 +98,9 @@ var myFunction = function () {
                 var sentence = document.createElement("p");
                 sentence.classList.add("mb-0");
                 sentence.innerHTML += getSentence(data.category, data.author, data.persons[Math.floor(Math.random()*data.persons.length)], data.locationsAndGPE[0]);
+                if (data.title == "The Communist Manifesto") {
+                    sentence.innerHTML = "Karl Marx is convinced that you'll start a revolution after reading this book."; 
+                }
                 quote.appendChild(sentence);
                 var footer = document.createElement("footer");
                 footer.classList.add("blockquote-footer");
